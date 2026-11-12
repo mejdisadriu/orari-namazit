@@ -1,0 +1,822 @@
+<!DOCTYPE html>
+<html lang="sq">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>NUR - Orari i Namazeve</title>
+  
+  <!-- Google Fonts: Inter & Amiri (për tekstet arabe) -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Amiri:wght@400;700&family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@700;800&display=swap" rel="stylesheet">
+
+  <!-- Tailwind CSS -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          fontFamily: {
+            sans: ['Inter', 'sans-serif'],
+            serif: ['Amiri', 'Georgia', 'serif'],
+            mono: ['JetBrains Mono', 'monospace'],
+          }
+        }
+      }
+    }
+  </script>
+
+  <!-- Lucide Icons -->
+  <script src="https://unpkg.com/lucide@latest"></script>
+
+  <style>
+    @keyframes gentlePulse {
+      0%, 100% { 
+        box-shadow: 0 0 22px rgba(239, 68, 68, 0.65), 0 0 8px rgba(248, 113, 113, 0.8), inset 0 0 10px rgba(239, 68, 68, 0.35); 
+        border-color: #ef4444; 
+      }
+      50% { 
+        box-shadow: 0 0 38px rgba(239, 68, 68, 0.95), 0 0 14px rgba(252, 165, 165, 0.95), inset 0 0 18px rgba(239, 68, 68, 0.55); 
+        border-color: #f87171; 
+      }
+    }
+    @keyframes mediumPulse {
+      0%, 100% { 
+        box-shadow: 0 0 30px rgba(239, 68, 68, 0.8), 0 0 12px rgba(248, 113, 113, 0.9), inset 0 0 16px rgba(239, 68, 68, 0.45); 
+        border-color: #ef4444; 
+      }
+      50% { 
+        box-shadow: 0 0 55px rgba(239, 68, 68, 1), 0 0 20px rgba(254, 202, 202, 1), inset 0 0 28px rgba(239, 68, 68, 0.75); 
+        border-color: #fca5a5; 
+      }
+    }
+    @keyframes urgentPulse {
+      0%, 100% { 
+        box-shadow: 0 0 40px rgba(239, 68, 68, 0.95), 0 0 16px rgba(254, 202, 202, 1), inset 0 0 24px rgba(239, 68, 68, 0.65); 
+        border-color: #f87171; 
+      }
+      50% { 
+        box-shadow: 0 0 75px rgba(239, 68, 68, 1), 0 0 28px rgba(255, 255, 255, 0.95), inset 0 0 42px rgba(239, 68, 68, 0.9); 
+        border-color: #ffffff; 
+      }
+    }
+    @keyframes twinkle {
+      0%, 100% { opacity: 0.25; transform: scale(0.85); }
+      50% { opacity: 1; transform: scale(1.25); }
+    }
+    @keyframes drift {
+      0% { transform: translateX(0); }
+      100% { transform: translateX(-50%); }
+    }
+    @keyframes driftReverse {
+      0% { transform: translateX(-50%); }
+      100% { transform: translateX(0); }
+    }
+
+    .pulse-normal {
+      animation: gentlePulse 3.5s ease-in-out infinite;
+    }
+    .pulse-warning {
+      animation: mediumPulse 1.8s ease-in-out infinite;
+    }
+    .pulse-urgent {
+      animation: urgentPulse 0.9s ease-in-out infinite;
+    }
+    .star-twinkle {
+      animation: twinkle 3.5s ease-in-out infinite;
+    }
+    .cloud-drift {
+      animation: drift 65s linear infinite;
+    }
+    .cloud-drift-reverse {
+      animation: driftReverse 80s linear infinite;
+    }
+    .galaxy-spin {
+      animation: spin 120s linear infinite;
+    }
+    .galaxy-spin-reverse {
+      animation: spin 160s linear infinite reverse;
+    }
+  </style>
+</head>
+<body class="min-h-screen bg-[#060918] text-slate-100 relative overflow-x-hidden font-sans selection:bg-amber-500/30">
+
+  <!-- ATMOSPHERIC CELESTIAL SKY BACKGROUND, TWINKLING STARS & COLORFUL GALAXY -->
+  <div class="fixed inset-0 pointer-events-none overflow-hidden z-0">
+    <!-- Deep Night Sky Base Glows -->
+    <div class="absolute top-0 left-1/4 w-[600px] h-[600px] bg-sky-500/10 rounded-full blur-[140px]"></div>
+    <div class="absolute top-1/3 right-1/4 w-[500px] h-[500px] bg-indigo-500/10 rounded-full blur-[150px]"></div>
+
+    <!-- Colorful Miniature Galaxy & Nebula Cluster -->
+    <div class="absolute top-24 left-[12%] w-80 h-80 opacity-45 galaxy-spin">
+      <div class="absolute inset-0 bg-gradient-to-tr from-purple-600/30 via-fuchsia-500/20 to-cyan-400/30 rounded-full blur-2xl transform rotate-45 scale-x-125"></div>
+      <div class="absolute inset-12 bg-gradient-to-bl from-amber-300/30 via-pink-500/25 to-indigo-500/30 rounded-full blur-xl"></div>
+      <div class="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-6 h-6 bg-amber-100/80 rounded-full blur-sm shadow-[0_0_25px_rgba(253,230,138,0.9)]"></div>
+    </div>
+
+    <!-- Secondary Distant Spiral Galaxy -->
+    <div class="absolute bottom-32 right-[10%] w-64 h-64 opacity-35 galaxy-spin-reverse">
+      <div class="absolute inset-0 bg-gradient-to-r from-cyan-500/25 via-blue-600/20 to-violet-600/30 rounded-full blur-2xl transform -rotate-12 scale-y-75"></div>
+      <div class="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-4 h-4 bg-sky-200/80 rounded-full blur-[2px] shadow-[0_0_18px_rgba(186,230,253,0.8)]"></div>
+    </div>
+
+    <!-- Stars Container (Populated by JS) -->
+    <div id="stars-container" class="absolute inset-0"></div>
+
+    <!-- Soft, Subtle Drifting Celestial Sky-Blue Clouds -->
+    <div class="absolute top-8 left-[-15%] w-[130%] h-48 opacity-20 cloud-drift flex gap-40">
+      <div class="w-[500px] h-32 bg-sky-200/30 rounded-full blur-3xl"></div>
+      <div class="w-[600px] h-36 bg-sky-400/20 rounded-full blur-3xl"></div>
+      <div class="w-[450px] h-28 bg-white/35 rounded-full blur-3xl"></div>
+    </div>
+    <div class="absolute top-96 right-[-15%] w-[130%] h-48 opacity-15 cloud-drift-reverse flex gap-48">
+      <div class="w-[550px] h-36 bg-sky-300/25 rounded-full blur-3xl"></div>
+      <div class="w-[450px] h-28 bg-sky-100/30 rounded-full blur-3xl"></div>
+    </div>
+  </div>
+
+  <!-- MAIN CONTAINER -->
+  <main class="relative z-20 max-w-7xl mx-auto px-4 sm:px-8 pt-4 pb-8 space-y-6">
+    
+    <!-- FLOATING CORNER CONTROLS FOR SETTINGS & CALENDAR -->
+    <div class="flex items-center justify-end gap-3 mb-[-1rem]">
+      <button 
+        onclick="toggleModal('calendar-modal', true)"
+        class="p-2.5 rounded-2xl bg-white/10 hover:bg-white/20 border border-white/20 backdrop-blur-xl transition-all flex items-center gap-2 text-xs font-medium shadow-sm cursor-pointer"
+        title="Kalendari Hixhri"
+      >
+        <i data-lucide="calendar" class="w-4 h-4 text-amber-400"></i>
+        <span class="hidden sm:inline">Kalendari</span>
+      </button>
+
+      <button 
+        onclick="toggleModal('settings-modal', true)"
+        class="p-2.5 rounded-2xl bg-white/10 hover:bg-white/20 border border-white/20 backdrop-blur-xl transition-all text-amber-400 shadow-sm cursor-pointer"
+        title="Cilësimet"
+      >
+        <i data-lucide="settings" class="w-4 h-4"></i>
+      </button>
+    </div>
+
+    <!-- HERO SECTION — SINGLE UNIFIED PRAYER CARD WITH TIMER INSIDE -->
+    <section class="w-full flex justify-center">
+      <div class="w-full max-w-5xl mx-auto">
+        
+        <div id="hero-card" class="rounded-3xl px-8 py-6 border-[3.5px] ring-2 ring-red-500/60 relative overflow-hidden flex flex-col justify-between backdrop-blur-2xl transition-all duration-500 shadow-2xl border-red-500 pulse-normal bg-slate-950/90 text-white shadow-red-600/50">
+          
+          <div class="my-1 z-10 flex flex-row items-center justify-between gap-4">
+            <div>
+              <h2 id="hero-active-name" class="text-4xl sm:text-5xl font-serif font-bold tracking-tight text-white">
+                Jacia
+              </h2>
+            </div>
+            <div class="text-right">
+              <span id="hero-active-time" class="text-6xl sm:text-7xl font-mono font-extrabold text-amber-400 tracking-wider">
+                19:08
+              </span>
+            </div>
+          </div>
+
+          <!-- ENLARGED LIQUID GLASS SUB-CARD FOR UPCOMING TIME -->
+          <div class="mt-4 pt-4 border-t border-white/10 relative">
+            <div class="absolute inset-0 bg-white/5 rounded-2xl blur-md pointer-events-none"></div>
+            <div class="relative z-10 bg-white/10 backdrop-blur-xl border border-white/25 text-white rounded-2xl px-6 py-4 flex flex-col sm:flex-row items-center justify-between gap-4 shadow-xl">
+              <div class="flex items-center gap-4">
+                <div class="p-3 rounded-2xl bg-red-500/20 text-red-400 border border-red-500/30 shadow-inner">
+                  <i data-lucide="clock" class="w-6 h-6 animate-pulse"></i>
+                </div>
+                <div>
+                  <p class="text-[11px] font-bold tracking-widest text-red-400 uppercase">
+                    Koha e mbetur
+                  </p>
+                  <p class="text-base sm:text-lg font-semibold text-slate-100 mt-0.5">
+                    Koha e ardhshme: <span id="hero-next-info" class="text-amber-300 font-bold text-lg sm:text-xl">Sabahu (05:12)</span>
+                  </p>
+                </div>
+              </div>
+
+              <div id="hero-countdown-badge" class="px-6 py-3 rounded-2xl text-white font-mono font-extrabold text-2xl sm:text-3xl tracking-widest shadow-lg transition-all duration-300 bg-gradient-to-r from-red-600 to-amber-600">
+                00 : 00 : 00
+              </div>
+            </div>
+          </div>
+
+          <div class="mt-4 pt-2 border-t border-white/10 flex items-center justify-between text-xs opacity-80 z-10">
+            <span class="flex items-center gap-1.5">
+              <i data-lucide="globe" class="w-3.5 h-3.5 text-amber-400"></i>
+              <span id="footer-city">Prishtina, Kosovo</span>
+            </span>
+            <span class="flex items-center gap-1.5">
+              <i data-lucide="clock" class="w-3.5 h-3.5 text-amber-400"></i>
+              <span id="footer-method">Muslim World League (MWL)</span>
+            </span>
+          </div>
+        </div>
+
+      </div>
+    </section>
+
+    <!-- PRAYER SCHEDULE GRID -->
+    <section class="space-y-6">
+      <div class="flex items-center justify-between">
+        <div></div>
+        <span id="api-fallback-badge" class="hidden text-xs px-3 py-1.5 rounded-xl bg-amber-500/10 border border-amber-500/30 text-amber-400">
+          Llogaritje Astronomike
+        </span>
+      </div>
+
+      <div id="schedule-grid" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-6 gap-5">
+        <!-- Populated dynamically by JavaScript -->
+      </div>
+    </section>
+
+    <!-- HADITH & QURAN REFLECTION SECTION -->
+    <section class="grid grid-cols-1 md:grid-cols-2 gap-6">
+      
+      <!-- HADITH OF THE DAY -->
+      <div class="rounded-3xl p-6 sm:p-8 bg-gradient-to-br from-slate-900 via-amber-950/20 to-slate-950 border border-amber-500/20 relative flex flex-col justify-between shadow-xl">
+        <div>
+          <div class="flex items-center justify-between mb-4">
+            <span class="text-[10px] font-bold font-mono tracking-widest text-amber-400 uppercase bg-amber-500/10 px-3 py-1 rounded-full border border-amber-500/30">
+              HADITHI I DITËS
+            </span>
+            <span id="hadith-number" class="text-xs text-amber-200/70 font-serif">Hadithi nr. 1</span>
+          </div>
+          <p id="hadith-arabic" class="text-xl sm:text-2xl font-serif text-right text-amber-200 leading-relaxed mb-4">
+            "إِنَّمَا الأَعْمَالُ بِالنِّيَّاتِ، وَإِنَّمَا لِكُلِّ امْرِئٍ مَا نَوَى"
+          </p>
+          <p id="hadith-translation" class="text-sm text-slate-200 font-medium leading-relaxed">
+            "Veprat vlerësohen sipas qëllimeve dhe çdo njeriu i takon ajo që ka qëlluar (ka pasur për qëllim)."
+          </p>
+        </div>
+        
+        <div class="mt-6 pt-4 border-t border-white/10 flex items-center justify-between text-xs">
+          <span id="hadith-source" class="text-amber-400/90 font-medium">Sahih al-Bukhari & Sahih Muslim</span>
+          <button 
+            onclick="nextHadith()"
+            class="px-3 py-1.5 rounded-xl bg-white/10 hover:bg-white/20 transition-all font-medium text-xs flex items-center gap-1.5 text-amber-300 cursor-pointer"
+          >
+            <i data-lucide="refresh-cw" class="w-3.5 h-3.5"></i> Tjetër
+          </button>
+        </div>
+      </div>
+
+      <!-- VERSE OF THE DAY -->
+      <div class="rounded-3xl p-6 sm:p-8 bg-gradient-to-br from-slate-900 via-emerald-950/20 to-slate-950 border border-emerald-500/20 relative flex flex-col justify-between shadow-xl">
+        <div>
+          <div class="flex items-center justify-between mb-4">
+            <span class="text-[10px] font-bold font-mono tracking-widest text-emerald-400 uppercase bg-emerald-500/10 px-3 py-1 rounded-full border border-emerald-500/30">
+              AJETI I DITËS
+            </span>
+            <span id="quran-surah" class="text-xs text-emerald-200/70 font-serif">Surah Ar-Ra'd</span>
+          </div>
+          <p id="quran-arabic" class="text-xl sm:text-2xl font-serif text-right text-emerald-200 leading-relaxed mb-4">
+            "أَلَا بِذِكْرِ اللَّهِ تَطْمَئِنُّ الْقُلُوبُ"
+          </p>
+          <p id="quran-translation" class="text-sm text-slate-200 font-medium leading-relaxed">
+            "Vërtet, me përmendjen e Allahut zemrat qetësohen."
+          </p>
+        </div>
+        
+        <div class="mt-6 pt-4 border-t border-white/10 flex items-center justify-between text-xs">
+          <span id="quran-number" class="text-emerald-400/90 font-medium">Ajeti 28</span>
+          <button 
+            onclick="nextQuran()"
+            class="px-3 py-1.5 rounded-xl bg-white/10 hover:bg-white/20 transition-all font-medium text-xs flex items-center gap-1.5 text-emerald-300 cursor-pointer"
+          >
+            <i data-lucide="refresh-cw" class="w-3.5 h-3.5"></i> Tjetër
+          </button>
+        </div>
+      </div>
+
+    </section>
+
+  </main>
+
+  <!-- SETTINGS DRAWER -->
+  <div id="settings-modal" class="hidden fixed inset-0 z-50 bg-black/60 backdrop-blur-md flex justify-end">
+    <div class="w-full max-w-md bg-slate-900 border-l border-white/10 p-6 sm:p-8 h-full overflow-y-auto space-y-6 text-slate-100 shadow-2xl">
+      <div class="flex items-center justify-between pb-4 border-b border-white/10">
+        <h3 class="text-xl font-serif font-bold text-amber-400">Cilësimet e Aplikacionit</h3>
+        <button onclick="toggleModal('settings-modal', false)" class="p-2 rounded-xl bg-white/10 hover:bg-white/20 cursor-pointer">Mbyll</button>
+      </div>
+
+      <div class="space-y-4">
+        <div>
+          <label class="text-xs font-bold uppercase tracking-wider text-slate-400">Zgjidh Qytetin</label>
+          <select 
+            id="city-select"
+            onchange="handleCityChange(this.value)"
+            class="w-full mt-2 bg-slate-800 border border-white/10 rounded-2xl p-3 text-sm focus:outline-none focus:border-amber-400"
+          ></select>
+        </div>
+
+        <div>
+          <label class="text-xs font-bold uppercase tracking-wider text-slate-400">Metoda e Llogaritjes</label>
+          <select 
+            id="method-select"
+            onchange="handleMethodChange(this.value)"
+            class="w-full mt-2 bg-slate-800 border border-white/10 rounded-2xl p-3 text-sm focus:outline-none focus:border-amber-400"
+          ></select>
+        </div>
+
+        <div>
+          <label class="text-xs font-bold uppercase tracking-wider text-slate-400">Metoda e Ikindisë (Asr Juristic)</label>
+          <select 
+            id="asr-select"
+            onchange="handleAsrChange(this.value)"
+            class="w-full mt-2 bg-slate-800 border border-white/10 rounded-2xl p-3 text-sm focus:outline-none focus:border-amber-400"
+          >
+            <option value="0">Standard (Shafi, Maliki, Hanbali)</option>
+            <option value="1" selected>Hanafi</option>
+          </select>
+        </div>
+
+        <div>
+          <label class="text-xs font-bold uppercase tracking-wider text-slate-400">Formati i Orës</label>
+          <div class="grid grid-cols-2 gap-3 mt-2">
+            <button 
+              id="btn-24h"
+              onclick="setHourFormat(false)"
+              class="p-3 rounded-2xl text-sm font-medium border bg-amber-500/20 border-amber-400 text-amber-300 cursor-pointer"
+            >
+              24 Orësh
+            </button>
+            <button 
+              id="btn-12h"
+              onclick="setHourFormat(true)"
+              class="p-3 rounded-2xl text-sm font-medium border bg-slate-800 border-white/10 cursor-pointer"
+            >
+              12 Orësh (AM/PM)
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ISLAMIC CALENDAR MODAL -->
+  <div id="calendar-modal" class="hidden fixed inset-0 z-50 bg-black/60 backdrop-blur-md flex items-center justify-center p-4">
+    <div class="w-full max-w-lg bg-slate-900 border border-white/10 rounded-3xl p-6 sm:p-8 space-y-6 text-slate-100 shadow-2xl">
+      <div class="flex items-center justify-between pb-4 border-b border-white/10">
+        <h3 class="text-xl font-serif font-bold text-amber-400">Kalendari Hixhri & Ngjarjet</h3>
+        <button onclick="toggleModal('calendar-modal', false)" class="p-2 rounded-xl bg-white/10 hover:bg-white/20 cursor-pointer">Mbyll</button>
+      </div>
+
+      <div class="text-center py-4 bg-slate-800/50 rounded-2xl border border-white/10">
+        <p class="text-xs text-slate-400 uppercase tracking-wider">Data Aktuale Hixhri</p>
+        <h4 id="hijri-date-display" class="text-2xl font-serif font-bold text-amber-300 mt-1">1448 Hixhri</h4>
+      </div>
+
+      <div class="space-y-3">
+        <h5 class="text-xs font-bold uppercase tracking-wider text-slate-400">Ngjarjet e Ardhshme Islame</h5>
+        <div id="islamic-events-list" class="space-y-3"></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- APPLICATION LOGIC -->
+  <script>
+    // ==========================================
+    // DATA & CONFIGURATION
+    // ==========================================
+    const DEFAULT_CITIES = [
+      { name: 'Prishtina', country: 'Kosovo', lat: 42.6629, lng: 21.1655 },
+      { name: 'Prizren', country: 'Kosovo', lat: 42.2139, lng: 20.7397 },
+      { name: 'Tirana', country: 'Albania', lat: 41.3275, lng: 19.8187 },
+      { name: 'Skopje', country: 'North Macedonia', lat: 42.0039, lng: 21.4518 },
+      { name: 'Istanbul', country: 'Turkey', lat: 41.0082, lng: 28.9784 },
+      { name: 'London', country: 'United Kingdom', lat: 51.5074, lng: -0.1278 },
+      { name: 'Mecca', country: 'Saudi Arabia', lat: 21.3891, lng: 39.8579 },
+      { name: 'Medina', country: 'Saudi Arabia', lat: 24.4539, lng: 39.6139 }
+    ];
+
+    const CALC_METHODS = [
+      { id: '3', name: 'Muslim World League (MWL)' },
+      { id: '2', name: 'Islamic Society of North America (ISNA)' },
+      { id: '4', name: 'Umm Al-Qura University, Makkah' },
+      { id: '1', name: 'Egyptian General Authority of Survey' },
+      { id: '5', name: 'University of Islamic Sciences, Karachi' }
+    ];
+
+    const HADITHS = [
+      {
+        arabic: "إِنَّمَا الأَعْمَالُ بِالنِّيَّاتِ، وَإِنَّمَا لِكُلِّ امْرِئٍ مَا نَوَى",
+        translation: "Veprat vlerësohen sipas qëllimeve dhe çdo njeriu i takon ajo që ka qëlluar (ka pasur për qëllim).",
+        source: "Sahih al-Bukhari & Sahih Muslim",
+        number: "Hadithi nr. 1"
+      },
+      {
+        arabic: "لاَ يُؤْمِنُ أَحَدُكُمْ حَتَّى يُحِبَّ لِأَخِيهِ مَا يُحِبُّ لِنَفْسِهِ",
+        translation: "Askush prej jush nuk beson (plotësisht) derisa t'i dëshirojë vëllait të vet atë që dëshiron për veten e tij.",
+        source: "Sahih al-Bukhari & Sahih Muslim",
+        number: "Hadithi nr. 13"
+      },
+      {
+        arabic: "مَنْ كَانَ يُؤْمِنُ بِاللَّهِ وَاليَوْمِ الآخِرِ فَلْيَقُلْ خَيْراً أَوْ لِيَصْمُتْ",
+        translation: "Kush i beson Allahut dhe Ditës së Fundit, le të flasë mirë ose le të heshtë.",
+        source: "Sahih al-Bukhari & Sahih Muslim",
+        number: "Hadithi nr. 15"
+      }
+    ];
+
+    const QURAN_VERSES = [
+      {
+        arabic: "أَلَا بِذِكْرِ اللَّهِ تَطْمَئِنُّ الْقُلُوبُ",
+        translation: "Vërtet, me përmendjen e Allahut zemrat qetësohen.",
+        surah: "Ar-Ra'd",
+        number: "Ajeti 28"
+      },
+      {
+        arabic: "فَاذْكُرُونِي أَذْكُرْكُمْ وَاشْكُرُوا لِي وَلَا تَكْفُرُونِ",
+        translation: "Prandaj kujtomëni Mua, që Unë t'ju kujtoj juve! Dhe më falënderoni e mos më mohoni!",
+        surah: "Al-Baqarah",
+        number: "Ajeti 152"
+      }
+    ];
+
+    const ISLAMIC_EVENTS = [
+      { name: 'Ramadani (Fillimi)', date: '17 Mars 2027', daysLeft: 124 },
+      { name: 'Eid al-Fitr', date: '16 Prill 2027', daysLeft: 154 },
+      { name: 'Eid al-Adha', date: '25 Qershor 2027', daysLeft: 224 }
+    ];
+
+    // Application State
+    let state = {
+      currentCity: DEFAULT_CITIES[0],
+      selectedMethod: '3',
+      asrJuristic: '1',
+      is12Hour: false,
+      hadithIndex: 0,
+      quranIndex: 0,
+      prayerSchedule: [
+        { id: 'Fajr', name: 'Sabahu', arabicName: 'الفجر', time: '05:12', icon: 'sunrise', isPrayer: true },
+        { id: 'Sunrise', name: 'Lindja e Diellit', arabicName: 'الشروق', time: '06:35', icon: 'sun', isPrayer: false },
+        { id: 'Dhuhr', name: 'Dreka', arabicName: 'الظهر', time: '12:15', icon: 'sun', isPrayer: true },
+        { id: 'Asr', name: 'Ikindia', arabicName: 'العصر', time: '15:32', icon: 'sun', isPrayer: true },
+        { id: 'Maghrib', name: 'Akshami', arabicName: 'المغرب', time: '17:48', icon: 'sunset', isPrayer: true },
+        { id: 'Isha', name: 'Jacia', arabicName: 'العشاء', time: '19:08', icon: 'moon', isPrayer: true },
+      ]
+    };
+
+    // ==========================================
+    // INITIALIZATION
+    // ==========================================
+    window.addEventListener('DOMContentLoaded', () => {
+      renderStars();
+      populateSettings();
+      populateCalendar();
+      lucide.createIcons();
+      fetchPrayerTimes();
+      updateClock();
+      setInterval(updateClock, 1000);
+    });
+
+    function renderStars() {
+      const container = document.getElementById('stars-container');
+      const stars = [
+        { top: '6%', left: '8%', size: 'w-1 h-1', delay: '0s', color: 'bg-white' },
+        { top: '12%', left: '22%', size: 'w-1.5 h-1.5', delay: '1.2s', color: 'bg-sky-200' },
+        { top: '8%', left: '45%', size: 'w-1 h-1', delay: '2.5s', color: 'bg-amber-100' },
+        { top: '15%', left: '68%', size: 'w-1.5 h-1.5', delay: '0.7s', color: 'bg-white' },
+        { top: '9%', left: '86%', size: 'w-1 h-1', delay: '1.9s', color: 'bg-cyan-200' },
+        { top: '24%', left: '16%', size: 'w-1 h-1', delay: '3.1s', color: 'bg-purple-200' },
+        { top: '28%', left: '34%', size: 'w-0.5 h-0.5', delay: '0.4s', color: 'bg-white' },
+        { top: '22%', left: '56%', size: 'w-1 h-1', delay: '2.1s', color: 'bg-amber-200' },
+        { top: '31%', left: '79%', size: 'w-1.5 h-1.5', delay: '1.5s', color: 'bg-white' },
+        { top: '27%', left: '93%', size: 'w-1 h-1', delay: '2.8s', color: 'bg-sky-200' },
+        { top: '42%', left: '5%', size: 'w-1.5 h-1.5', delay: '1.1s', color: 'bg-white' },
+        { top: '46%', left: '27%', size: 'w-1 h-1', delay: '2.4s', color: 'bg-cyan-100' },
+        { top: '39%', left: '63%', size: 'w-0.5 h-0.5', delay: '0.9s', color: 'bg-white' },
+        { top: '48%', left: '88%', size: 'w-1 h-1', delay: '3.3s', color: 'bg-amber-100' },
+        { top: '58%', left: '14%', size: 'w-1 h-1', delay: '1.7s', color: 'bg-sky-200' },
+        { top: '63%', left: '41%', size: 'w-1.5 h-1.5', delay: '0.3s', color: 'bg-white' },
+        { top: '56%', left: '74%', size: 'w-1 h-1', delay: '2.6s', color: 'bg-purple-200' },
+        { top: '67%', left: '91%', size: 'w-1.5 h-1.5', delay: '1.4s', color: 'bg-white' },
+        { top: '76%', left: '9%', size: 'w-1 h-1', delay: '2.9s', color: 'bg-amber-200' },
+        { top: '81%', left: '31%', size: 'w-1.5 h-1.5', delay: '0.6s', color: 'bg-white' },
+        { top: '74%', left: '53%', size: 'w-1 h-1', delay: '2.2s', color: 'bg-sky-100' },
+        { top: '84%', left: '71%', size: 'w-1 h-1', delay: '1.8s', color: 'bg-cyan-200' },
+        { top: '89%', left: '19%', size: 'w-0.5 h-0.5', delay: '3.0s', color: 'bg-white' },
+        { top: '92%', left: '84%', size: 'w-1.5 h-1.5', delay: '1.0s', color: 'bg-amber-100' },
+      ];
+
+      container.innerHTML = stars.map(s => `
+        <span style="top: ${s.top}; left: ${s.left}; animation-delay: ${s.delay};" 
+              class="absolute ${s.size} ${s.color} rounded-full star-twinkle shadow-[0_0_6px_rgba(255,255,255,0.8)]"></span>
+      `).join('');
+    }
+
+    function populateSettings() {
+      const citySelect = document.getElementById('city-select');
+      citySelect.innerHTML = DEFAULT_CITIES.map(c => 
+        `<option value="${c.name}" ${c.name === state.currentCity.name ? 'selected' : ''}>${c.name}, ${c.country}</option>`
+      ).join('');
+
+      const methodSelect = document.getElementById('method-select');
+      methodSelect.innerHTML = CALC_METHODS.map(m => 
+        `<option value="${m.id}" ${m.id === state.selectedMethod ? 'selected' : ''}>${m.name}</option>`
+      ).join('');
+    }
+
+    function populateCalendar() {
+      try {
+        const hijri = new Intl.DateTimeFormat('en-TN-u-ca-islamic', {
+          day: 'numeric',
+          month: 'long',
+          year: 'numeric'
+        }).format(new Date());
+        document.getElementById('hijri-date-display').textContent = hijri;
+      } catch {
+        document.getElementById('hijri-date-display').textContent = '1448 Hixhri';
+      }
+
+      const list = document.getElementById('islamic-events-list');
+      list.innerHTML = ISLAMIC_EVENTS.map(ev => `
+        <div class="p-4 rounded-2xl bg-slate-800/80 border border-white/10 flex items-center justify-between">
+          <div>
+            <p class="font-semibold text-sm">${ev.name}</p>
+            <p class="text-xs text-slate-400 mt-0.5">${ev.date}</p>
+          </div>
+          <span class="text-xs font-mono px-3 py-1 rounded-full bg-amber-500/10 text-amber-300 border border-amber-500/20">
+            Pas ${ev.daysLeft} ditësh
+          </span>
+        </div>
+      `).join('');
+    }
+
+    // ==========================================
+    // API & CALCULATIONS
+    // ==========================================
+    async function fetchPrayerTimes() {
+      const fallbackBadge = document.getElementById('api-fallback-badge');
+      try {
+        const todayStr = new Date().toISOString().split('T')[0];
+        const url = `https://api.aladhan.com/v1/timings/${todayStr}?latitude=${state.currentCity.lat}&longitude=${state.currentCity.lng}&method=${state.selectedMethod}&school=${state.asrJuristic}`;
+        const res = await fetch(url);
+        const data = await res.json();
+        if (data && data.code === 200) {
+          const timings = data.data.timings;
+          state.prayerSchedule = [
+            { id: 'Fajr', name: 'Sabahu', arabicName: 'الفجر', time: timings.Fajr.substring(0, 5), icon: 'sunrise', isPrayer: true },
+            { id: 'Sunrise', name: 'Lindja e Diellit', arabicName: 'الشروق', time: timings.Sunrise.substring(0, 5), icon: 'sun', isPrayer: false },
+            { id: 'Dhuhr', name: 'Dreka', arabicName: 'الظهر', time: timings.Dhuhr.substring(0, 5), icon: 'sun', isPrayer: true },
+            { id: 'Asr', name: 'Ikindia', arabicName: 'العصر', time: timings.Asr.substring(0, 5), icon: 'sun', isPrayer: true },
+            { id: 'Maghrib', name: 'Akshami', arabicName: 'المغرب', time: timings.Maghrib.substring(0, 5), icon: 'sunset', isPrayer: true },
+            { id: 'Isha', name: 'Jacia', arabicName: 'العشاء', time: timings.Isha.substring(0, 5), icon: 'moon', isPrayer: true },
+          ];
+          fallbackBadge.classList.add('hidden');
+        }
+      } catch (e) {
+        fallbackBadge.classList.remove('hidden');
+      }
+      updateClock();
+    }
+
+    function timeToMinutes(timeStr) {
+      if (!timeStr) return 0;
+      const [h, m] = timeStr.split(':').map(Number);
+      return h * 60 + m;
+    }
+
+    function formatTimeDisplay(timeStr) {
+      if (!timeStr) return '--:--';
+      if (!state.is12Hour) return timeStr;
+      const [h, m] = timeStr.split(':').map(Number);
+      const suffix = h >= 12 ? 'PM' : 'AM';
+      const hour12 = h % 12 || 12;
+      return `${String(hour12).padStart(2, '0')}:${String(m).padStart(2, '0')} ${suffix}`;
+    }
+
+    function getSkyTheme(pId) {
+      switch(pId) {
+        case 'Fajr':
+          return 'bg-gradient-to-br from-sky-400/40 via-indigo-950 to-slate-950 text-sky-100 border-sky-400/60';
+        case 'Sunrise':
+          return 'bg-gradient-to-br from-amber-400/40 via-orange-950/40 to-slate-950 text-amber-100 border-amber-400/60';
+        case 'Dhuhr':
+          return 'bg-gradient-to-br from-blue-500/40 via-sky-950/60 to-slate-950 text-blue-100 border-blue-400/60';
+        case 'Asr':
+          return 'bg-gradient-to-br from-amber-500/40 via-yellow-950/40 to-slate-950 text-amber-100 border-amber-400/60';
+        case 'Maghrib':
+          return 'bg-gradient-to-br from-purple-500/40 via-fuchsia-950/50 to-slate-950 text-purple-100 border-purple-400/60';
+        case 'Isha':
+          return 'bg-gradient-to-br from-indigo-500/40 via-slate-950 to-blue-950 text-indigo-100 border-indigo-400/60';
+        default:
+          return 'bg-slate-900 text-white border-white/20';
+      }
+    }
+
+    // ==========================================
+    // REAL-TIME CLOCK & UI RENDERING
+    // ==========================================
+    function updateClock() {
+      const now = new Date();
+      const currentMinutes = now.getHours() * 60 + now.getMinutes() + now.getSeconds() / 60;
+      const prayersOnly = state.prayerSchedule.filter(p => p.isPrayer);
+
+      let active = prayersOnly[prayersOnly.length - 1];
+      let next = prayersOnly[0];
+
+      for (let i = 0; i < prayersOnly.length; i++) {
+        const pMin = timeToMinutes(prayersOnly[i].time);
+        if (currentMinutes >= pMin && (i === prayersOnly.length - 1 || currentMinutes < timeToMinutes(prayersOnly[i + 1].time))) {
+          active = prayersOnly[i];
+          next = i < prayersOnly.length - 1 ? prayersOnly[i + 1] : prayersOnly[0];
+          break;
+        }
+      }
+
+      let nextMin = timeToMinutes(next.time);
+      if (nextMin <= currentMinutes) {
+        nextMin += 1440;
+      }
+
+      const diffTotalSeconds = Math.max(0, Math.floor((nextMin - currentMinutes) * 60));
+      const hrs = Math.floor(diffTotalSeconds / 3600);
+      const mins = Math.floor((diffTotalSeconds % 3600) / 60);
+      const secs = diffTotalSeconds % 60;
+
+      const timeRemaining = `${String(hrs).padStart(2, '0')} : ${String(mins).padStart(2, '0')} : ${String(secs).padStart(2, '0')}`;
+
+      let pulseLevel = 'normal';
+      if (diffTotalSeconds > 0 && diffTotalSeconds <= 600) {
+        pulseLevel = 'urgent';
+      } else if (diffTotalSeconds > 600 && diffTotalSeconds <= 1800) {
+        pulseLevel = 'warning';
+      }
+
+      // Update Hero Card
+      document.getElementById('hero-active-name').textContent = active.name;
+      document.getElementById('hero-active-time').textContent = formatTimeDisplay(active.time);
+      document.getElementById('hero-next-info').textContent = `${next.name} (${formatTimeDisplay(next.time)})`;
+      
+      const heroBadge = document.getElementById('hero-countdown-badge');
+      heroBadge.textContent = timeRemaining;
+      heroBadge.className = `px-6 py-3 rounded-2xl text-white font-mono font-extrabold text-2xl sm:text-3xl tracking-widest shadow-lg transition-all duration-300 ${
+        pulseLevel === 'urgent'
+          ? 'bg-red-600 animate-pulse ring-4 ring-red-500/60'
+          : pulseLevel === 'warning'
+            ? 'bg-gradient-to-r from-red-600 to-orange-500 ring-2 ring-red-400/40'
+            : 'bg-gradient-to-r from-red-600 to-amber-600'
+      }`;
+
+      const heroCard = document.getElementById('hero-card');
+      heroCard.className = `rounded-3xl px-8 py-6 border-[3.5px] ring-2 ring-red-500/60 relative overflow-hidden flex flex-col justify-between backdrop-blur-2xl transition-all duration-500 shadow-2xl ${
+        pulseLevel === 'urgent'
+          ? 'border-red-400 pulse-urgent'
+          : pulseLevel === 'warning'
+            ? 'border-red-500 pulse-warning'
+            : 'border-red-500 pulse-normal'
+      } bg-slate-950/90 text-white shadow-red-600/50`;
+
+      document.getElementById('footer-city').textContent = `${state.currentCity.name}, ${state.currentCity.country}`;
+      const methodObj = CALC_METHODS.find(m => m.id === state.selectedMethod);
+      document.getElementById('footer-method').textContent = methodObj ? methodObj.name : '';
+
+      // Update Schedule Grid
+      const grid = document.getElementById('schedule-grid');
+      const currentMinFloor = now.getHours() * 60 + now.getMinutes();
+
+      grid.innerHTML = state.prayerSchedule.map(p => {
+        const isActive = active.id === p.id;
+        const isNext = next.id === p.id;
+        const pMin = timeToMinutes(p.time);
+        const isCompleted = p.isPrayer && currentMinFloor > pMin && !isActive;
+
+        const cardClasses = `rounded-3xl px-5 py-3.5 transition-all duration-500 relative overflow-hidden flex flex-col justify-between group shadow-lg ${
+          isActive 
+            ? `border-[3px] ring-4 ring-red-500/75 border-red-400 scale-[1.04] shadow-2xl shadow-red-600/60 z-20 bg-slate-950/90 text-white ${
+                pulseLevel === 'urgent'
+                  ? 'pulse-urgent'
+                  : pulseLevel === 'warning'
+                    ? 'pulse-warning'
+                    : 'pulse-normal'
+              }`
+            : `border-2 ${getSkyTheme(p.id)} shadow-cyan-500/10`
+        } ${isCompleted ? 'opacity-75' : 'hover:scale-[1.02]'}`;
+
+        let bottomContent = '';
+        if (isActive) {
+          bottomContent = `
+            <span class="text-red-400 font-bold tracking-wider uppercase flex items-center gap-1.5 bg-black/40 px-2.5 py-0.5 rounded-md">
+              <span class="w-2 h-2 rounded-full bg-red-500 animate-ping"></span>
+              Aktual
+            </span>
+          `;
+        } else if (isNext) {
+          const badgePulseClass = pulseLevel === 'urgent'
+            ? 'bg-red-600 animate-pulse ring-2 ring-red-500/60'
+            : pulseLevel === 'warning'
+              ? 'bg-gradient-to-r from-red-600 to-orange-500 ring-2 ring-red-400/40'
+              : 'bg-gradient-to-r from-red-600 to-amber-600';
+
+          bottomContent = `
+            <div class="w-full flex flex-col gap-1">
+              <span class="text-[10px] font-bold tracking-widest text-red-400 uppercase">
+                Koha e mbetur
+              </span>
+              <div class="w-full text-center px-2.5 py-1 rounded-xl text-white font-mono font-extrabold text-sm tracking-widest shadow-lg transition-all duration-300 ${badgePulseClass}">
+                ${timeRemaining}
+              </div>
+            </div>
+          `;
+        }
+
+        return `
+          <div class="${cardClasses}">
+            <div>
+              <div class="flex items-center justify-between mb-1.5">
+                <div class="p-2 rounded-xl ${
+                  isActive 
+                    ? 'bg-red-500 text-white shadow-lg shadow-red-500/40' 
+                    : 'bg-white/10 text-white border border-white/20 backdrop-blur-md'
+                }">
+                  <i data-lucide="${p.icon}" class="w-3.5 h-3.5"></i>
+                </div>
+                <span class="font-serif text-xs opacity-80">${p.arabicName}</span>
+              </div>
+
+              <p class="text-xs font-bold uppercase tracking-wider opacity-90">
+                ${p.name}
+              </p>
+              <p class="text-3xl sm:text-4xl font-mono font-extrabold tracking-tight mt-0.5">
+                ${formatTimeDisplay(p.time)}
+              </p>
+            </div>
+
+            <div class="mt-2.5 pt-2 border-t border-white/10 flex items-center justify-between text-[11px] min-h-[28px]">
+              ${bottomContent}
+            </div>
+          </div>
+        `;
+      }).join('');
+
+      lucide.createIcons();
+    }
+
+    // ==========================================
+    // INTERACTIONS & EVENT HANDLERS
+    // ==========================================
+    function toggleModal(id, show) {
+      const el = document.getElementById(id);
+      if (show) {
+        el.classList.remove('hidden');
+      } else {
+        el.classList.add('hidden');
+      }
+    }
+
+    function handleCityChange(cityName) {
+      const found = DEFAULT_CITIES.find(c => c.name === cityName);
+      if (found) {
+        state.currentCity = found;
+        fetchPrayerTimes();
+      }
+    }
+
+    function handleMethodChange(methodId) {
+      state.selectedMethod = methodId;
+      fetchPrayerTimes();
+    }
+
+    function handleAsrChange(asrVal) {
+      state.asrJuristic = asrVal;
+      fetchPrayerTimes();
+    }
+
+    function setHourFormat(use12h) {
+      state.is12Hour = use12h;
+      const btn24 = document.getElementById('btn-24h');
+      const btn12 = document.getElementById('btn-12h');
+      
+      if (!use12h) {
+        btn24.className = 'p-3 rounded-2xl text-sm font-medium border bg-amber-500/20 border-amber-400 text-amber-300 cursor-pointer';
+        btn12.className = 'p-3 rounded-2xl text-sm font-medium border bg-slate-800 border-white/10 cursor-pointer';
+      } else {
+        btn12.className = 'p-3 rounded-2xl text-sm font-medium border bg-amber-500/20 border-amber-400 text-amber-300 cursor-pointer';
+        btn24.className = 'p-3 rounded-2xl text-sm font-medium border bg-slate-800 border-white/10 cursor-pointer';
+      }
+      updateClock();
+    }
+
+    function nextHadith() {
+      state.hadithIndex = (state.hadithIndex + 1) % HADITHS.length;
+      const h = HADITHS[state.hadithIndex];
+      document.getElementById('hadith-number').textContent = h.number;
+      document.getElementById('hadith-arabic').textContent = `"${h.arabic}"`;
+      document.getElementById('hadith-translation').textContent = `"${h.translation}"`;
+      document.getElementById('hadith-source').textContent = h.source;
+    }
+
+    function nextQuran() {
+      state.quranIndex = (state.quranIndex + 1) % QURAN_VERSES.length;
+      const q = QURAN_VERSES[state.quranIndex];
+      document.getElementById('quran-surah').textContent = `Surah ${q.surah}`;
+      document.getElementById('quran-arabic').textContent = `"${q.arabic}"`;
+      document.getElementById('quran-translation').textContent = `"${q.translation}"`;
+      document.getElementById('quran-number').textContent = q.number;
+    }
+  </script>
+</body>
+</html>
